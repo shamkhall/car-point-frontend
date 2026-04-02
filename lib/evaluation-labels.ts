@@ -1,3 +1,8 @@
+import type { ScoreBreakdown } from "@/lib/api";
+
+// qualityStatus values: 0=GOOD, 1=POOR, 2=EXCELLENT
+// priceStatus values: 0=FAIR_PRICE, 1=GREAT_DEAL, 2=OVERPRICED
+
 export const qualityLabels: Record<number, string> = {
   0: "Good",
   1: "Poor",
@@ -34,7 +39,11 @@ export const priceTextColors: Record<number, string> = {
   2: "text-destructive",
 };
 
-export const scoreBreakdownConfig = [
+export const scoreBreakdownConfig: ReadonlyArray<{
+  key: keyof ScoreBreakdown;
+  label: string;
+  max: number;
+}> = [
   { key: "mileageScore", label: "Mileage", max: 25 },
   { key: "reliabilityScore", label: "Reliability", max: 20 },
   { key: "ageScore", label: "Age", max: 15 },
@@ -43,4 +52,4 @@ export const scoreBreakdownConfig = [
   { key: "transmissionScore", label: "Transmission", max: 5 },
   { key: "driveScore", label: "Drive", max: 5 },
   { key: "engineScore", label: "Engine", max: 5 },
-] as const;
+];

@@ -116,12 +116,12 @@ export default function HistoryPage() {
                           <div key={key} className="space-y-1">
                             <div className="flex justify-between text-xs">
                               <span className="text-muted-foreground">{label}</span>
-                              <span>{(result.scoreBreakdown as Record<string, number>)[key]}/{max}</span>
+                              <span>{result.scoreBreakdown[key]}/{max}</span>
                             </div>
                             <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-primary rounded-full"
-                                style={{ width: `${((result.scoreBreakdown as Record<string, number>)[key] / max) * 100}%` }}
+                                style={{ width: `${(result.scoreBreakdown[key] / max) * 100}%` }}
                               />
                             </div>
                           </div>
