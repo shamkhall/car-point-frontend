@@ -15,6 +15,20 @@ import { evaluate, type EvaluationResult, type EvaluateRequest } from "@/lib/api
 import { useAuth } from "./auth-provider";
 import type { Condition, EngineType, Transmission, DriveType, BodyType, Color, City } from "@/lib/car-data";
 
+const STEPS = {
+  LANDING: 0,
+  BRAND_MODEL: 1,
+  YEAR_MILEAGE: 2,
+  CONDITION_ENGINE: 3,
+  TRANSMISSION_DRIVE: 4,
+  DETAILS: 5,
+  PRICE: 6,
+  RESULTS: 7,
+} as const;
+
+const LAST_STEP = STEPS.RESULTS;
+const PROGRESS_STEPS = 7;
+
 export interface CarFormData {
   brand: string;
   model: string;
@@ -59,15 +73,13 @@ export function CarEvaluationWizard() {
   const [evaluating, setEvaluating] = useState(false);
   const [evaluationError, setEvaluationError] = useState<string | null>(null);
 
-  const totalSteps = 7;
-
   const updateFormData = (updates: Partial<CarFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
   const goToNext = () => {
     setDirection(1);
-    setCurrentStep((prev) => Math.min(prev + 1, 8));
+    setCurrentStep((prev) => Math.min(prev + 1, LAST_STEP));
   };
 
   const goToPrevious = () => {
@@ -112,7 +124,7 @@ export function CarEvaluationWizard() {
       const result = await evaluate(request);
       setEvaluationResult(result);
       setDirection(1);
-      setCurrentStep(7);
+      setCurrentStep(STEPS.RESULTS);
     } catch {
       setEvaluationError("Unable to evaluate. Please try again.");
     } finally {
@@ -145,77 +157,77 @@ export function CarEvaluationWizard() {
 
   const renderStep = () => {
     switch (currentStep) {
-      case 0:
+      case STEPS.LANDING:
         return <LandingStep onNext={goToNext} />;
-      case 1:
+      case STEPS.BRAND_MODEL:
         return (
           <BrandModelStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={1}
-            totalSteps={totalSteps}
+            currentStep={STEPS.BRAND_MODEL}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 2:
+      case STEPS.YEAR_MILEAGE:
         return (
           <YearMileageStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={2}
-            totalSteps={totalSteps}
+            currentStep={STEPS.YEAR_MILEAGE}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 3:
+      case STEPS.CONDITION_ENGINE:
         return (
           <ConditionEngineStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={3}
-            totalSteps={totalSteps}
+            currentStep={STEPS.CONDITION_ENGINE}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 4:
+      case STEPS.TRANSMISSION_DRIVE:
         return (
           <TransmissionDriveStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={4}
-            totalSteps={totalSteps}
+            currentStep={STEPS.TRANSMISSION_DRIVE}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 5:
+      case STEPS.DETAILS:
         return (
           <DetailsStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={5}
-            totalSteps={totalSteps}
+            currentStep={STEPS.DETAILS}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 6:
+      case STEPS.PRICE:
         return (
           <PriceStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={handleEvaluate}
             onBack={goToPrevious}
-            currentStep={6}
-            totalSteps={totalSteps}
+            currentStep={STEPS.PRICE}
+            totalSteps={PROGRESS_STEPS}
             loading={evaluating}
             error={evaluationError}
           />
         );
-      case 7:
+      case STEPS.RESULTS:
         return evaluationResult ? (
           <ResultsStep
             formData={formData}
@@ -247,7 +259,7 @@ export function CarEvaluationWizard() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showAccountPrompt && currentStep === 7 && (
+        {showAccountPrompt && currentStep === STEPS.RESULTS && (
           <AccountPrompt onClose={() => setShowAccountPrompt(false)} />
         )}
       </AnimatePresence>
