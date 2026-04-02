@@ -14,6 +14,7 @@ import { Phone, Loader2 } from "lucide-react";
 import { GoogleIcon } from "./icons/google-icon";
 import { AppleIcon } from "./icons/apple-icon";
 import type { ConfirmationResult } from "firebase/auth";
+import { useSignIn } from "@/hooks/use-sign-in";
 
 interface AuthModalProps {
   open: boolean;
@@ -21,72 +22,49 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ open, onOpenChange }: AuthModalProps) {
-  const { signInWithGoogle, signInWithApple, signInWithPhone, confirmPhoneCode } =
-    useAuth();
-  const [loading, setLoading] = useState(false);
+  const { signInWithPhone, confirmPhoneCode } = useAuth();
+  const {
+    handleGoogle,
+    handleApple,
+    loading: signInLoading,
+    error: signInError,
+  } = useSignIn(() => onOpenChange(false));
+  const [phoneLoading, setPhoneLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
-  const [error, setError] = useState("");
-
-  const handleGoogle = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      await signInWithGoogle();
-      onOpenChange(false);
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to sign in";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleApple = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      await signInWithApple();
-      onOpenChange(false);
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to sign in";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [phoneError, setPhoneError] = useState("");
 
   const handleSendCode = async () => {
     if (!phoneNumber) return;
-    setLoading(true);
-    setError("");
+    setPhoneLoading(true);
+    setPhoneError("");
     try {
       const result = await signInWithPhone(phoneNumber);
       setConfirmationResult(result);
       setShowOtp(true);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Failed to send code";
-      setError(message);
+      setPhoneError(message);
     } finally {
-      setLoading(false);
+      setPhoneLoading(false);
     }
   };
 
   const handleVerifyCode = async () => {
     if (!confirmationResult || !otpCode) return;
-    setLoading(true);
-    setError("");
+    setPhoneLoading(true);
+    setPhoneError("");
     try {
       await confirmPhoneCode(confirmationResult, otpCode);
       onOpenChange(false);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Invalid code";
-      setError(message);
+      setPhoneError(message);
     } finally {
-      setLoading(false);
+      setPhoneLoading(false);
     }
   };
 
@@ -95,8 +73,8 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
     setShowOtp(false);
     setOtpCode("");
     setConfirmationResult(null);
-    setError("");
-    setLoading(false);
+    setPhoneError("");
+    setPhoneLoading(false);
   };
 
   return (
@@ -113,17 +91,19 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
-          {error && (
-            <p className="text-sm text-destructive text-center">{error}</p>
+          {(signInError || phoneError) && (
+            <p className="text-sm text-destructive text-center">
+              {signInError || phoneError}
+            </p>
           )}
 
           <Button
             variant="outline"
             className="w-full h-12 rounded-xl text-base"
             onClick={handleGoogle}
-            disabled={loading}
+            disabled={signInLoading}
           >
-            {loading ? (
+            {signInLoading ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
               <GoogleIcon className="w-5 h-5 mr-2" />
@@ -135,7 +115,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             variant="outline"
             className="w-full h-12 rounded-xl text-base"
             onClick={handleApple}
-            disabled={loading}
+            disabled={signInLoading}
           >
             <AppleIcon className="w-5 h-5 mr-2" />
             Continue with Apple
@@ -160,14 +140,14 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="h-12 rounded-xl flex-1"
-                disabled={loading}
+                disabled={phoneLoading}
               />
               <Button
                 onClick={handleSendCode}
-                disabled={loading || !phoneNumber}
+                disabled={phoneLoading || !phoneNumber}
                 className="h-12 rounded-xl px-4"
               >
-                {loading ? (
+                {phoneLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Phone className="w-4 h-4" />
@@ -187,14 +167,14 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                   onChange={(e) => setOtpCode(e.target.value)}
                   className="h-12 rounded-xl flex-1 text-center text-lg tracking-widest"
                   maxLength={6}
-                  disabled={loading}
+                  disabled={phoneLoading}
                 />
                 <Button
                   onClick={handleVerifyCode}
-                  disabled={loading || otpCode.length < 6}
+                  disabled={phoneLoading || otpCode.length < 6}
                   className="h-12 rounded-xl px-6"
                 >
-                  {loading ? (
+                  {phoneLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     "Verify"

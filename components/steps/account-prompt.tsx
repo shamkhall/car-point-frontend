@@ -1,49 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X, Bookmark, TrendingUp, Loader2 } from "lucide-react";
-import { useAuth } from "@/components/auth-provider";
 import { GoogleIcon } from "@/components/icons/google-icon";
 import { AppleIcon } from "@/components/icons/apple-icon";
+import { useSignIn } from "@/hooks/use-sign-in";
 
 interface AccountPromptProps {
   onClose: () => void;
 }
 
 export function AccountPrompt({ onClose }: AccountPromptProps) {
-  const { signInWithGoogle, signInWithApple } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleGoogle = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      await signInWithGoogle();
-      onClose();
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to sign in";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleApple = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      await signInWithApple();
-      onClose();
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to sign in";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { handleGoogle, handleApple, loading, error } = useSignIn(onClose);
 
   return (
     <motion.div
