@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
-import { PhoneAuthForm } from "./phone-auth-form";
+
 import { GoogleIcon } from "./icons/google-icon";
 import { AppleIcon } from "./icons/apple-icon";
 import { useSignIn } from "@/hooks/use-sign-in";
@@ -75,10 +75,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             </div>
           </div>
 
-          <PhoneAuthForm
-            onSuccess={() => onOpenChange(false)}
-            disabled={signInLoading}
-          />
+          
         </div>
       </DialogContent>
     </Dialog>

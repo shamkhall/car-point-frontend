@@ -8,24 +8,13 @@ import { useAuth } from "@/components/auth-provider";
 import { getEvaluations, type EvaluationHistoryItem } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-<<<<<<< Updated upstream
-import { qualityLabels, qualityBadgeColors, priceLabels, priceBadgeColors, scoreBreakdownConfig } from "@/lib/evaluation-labels";
-=======
-
-const qualityLabels: Record<number, string> = { 0: "Yaxşı", 1: "Pis", 2: "Əla" };
-const qualityBadgeColors: Record<number, string> = {
-  0: "bg-warning/20 text-warning-foreground",
-  1: "bg-destructive/20 text-destructive",
-  2: "bg-success/20 text-success",
-};
-
-const priceLabels: Record<number, string> = { 0: "Normal qiymət", 1: "Əla sövdələşmə", 2: "Bahadır" };
-const priceBadgeColors: Record<number, string> = {
-  0: "bg-muted text-muted-foreground",
-  1: "bg-success/20 text-success",
-  2: "bg-destructive/20 text-destructive",
-};
->>>>>>> Stashed changes
+import {
+  qualityLabels,
+  qualityBadgeColors,
+  priceLabels,
+  priceBadgeColors,
+  scoreBreakdownConfig,
+} from "@/lib/evaluation-labels";
 
 export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
@@ -49,7 +38,9 @@ export default function HistoryPage() {
     setError(null);
     getEvaluations(page)
       .then((res) => {
-        setEvaluations((prev) => (page === 1 ? res.data : [...prev, ...res.data]));
+        setEvaluations((prev) =>
+          page === 1 ? res.data : [...prev, ...res.data]
+        );
         setTotal(res.meta.total);
       })
       .catch(() => {
@@ -72,20 +63,6 @@ export default function HistoryPage() {
     );
   }
 
-<<<<<<< Updated upstream
-=======
-  const breakdownLabels = [
-    { key: "mileageScore", label: "Yürüş", max: 25 },
-    { key: "reliabilityScore", label: "Etibarlılıq", max: 20 },
-    { key: "ageScore", label: "Yaş", max: 15 },
-    { key: "conditionScore", label: "Vəziyyət", max: 15 },
-    { key: "depreciationScore", label: "Amortizasiya", max: 10 },
-    { key: "transmissionScore", label: "Ötürmə", max: 5 },
-    { key: "driveScore", label: "Çəkiş", max: 5 },
-    { key: "engineScore", label: "Mühərrik", max: 5 },
-  ] as const;
-
->>>>>>> Stashed changes
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-background">
       <div className="max-w-2xl mx-auto px-4 py-8">
@@ -98,7 +75,9 @@ export default function HistoryPage() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold">Qiymətləndirmə tarixçəsi</h1>
-            <p className="text-sm text-muted-foreground">{total} qiymətləndirmə</p>
+            <p className="text-sm text-muted-foreground">
+              {total} qiymətləndirmə
+            </p>
           </div>
         </div>
 
@@ -117,7 +96,9 @@ export default function HistoryPage() {
         ) : evaluations.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <p className="text-lg mb-2">Hələ qiymətləndirmə yoxdur</p>
-            <p className="text-sm">Burada görmək üçün maşın qiymətləndirin!</p>
+            <p className="text-sm">
+              Burada görmək üçün maşın qiymətləndirin!
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -142,13 +123,29 @@ export default function HistoryPage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={cn("px-2 py-1 rounded-full text-xs font-medium", qualityBadgeColors[result.qualityStatus])}>
-                        {result.qualityScore}/100 {qualityLabels[result.qualityStatus]}
+                      <span
+                        className={cn(
+                          "px-2 py-1 rounded-full text-xs font-medium",
+                          qualityBadgeColors[result.qualityStatus]
+                        )}
+                      >
+                        {result.qualityScore}/100{" "}
+                        {qualityLabels[result.qualityStatus]}
                       </span>
-                      <span className={cn("px-2 py-1 rounded-full text-xs font-medium", priceBadgeColors[result.price.priceStatus])}>
+                      <span
+                        className={cn(
+                          "px-2 py-1 rounded-full text-xs font-medium",
+                          priceBadgeColors[result.price.priceStatus]
+                        )}
+                      >
                         {priceLabels[result.price.priceStatus]}
                       </span>
-                      <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", isExpanded && "rotate-180")} />
+                      <ChevronDown
+                        className={cn(
+                          "w-4 h-4 text-muted-foreground transition-transform",
+                          isExpanded && "rotate-180"
+                        )}
+                      />
                     </div>
                   </div>
 
@@ -156,21 +153,36 @@ export default function HistoryPage() {
                     <div className="px-4 pb-4 border-t border-border pt-4 space-y-3">
                       {result.price.average != null && (
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Bazar ortalaması</span>
-                          <span className="font-medium">{result.price.average.toLocaleString()} AZN ({result.price.deviation > 0 ? "+" : ""}{result.price.deviation.toFixed(1)}%)</span>
+                          <span className="text-muted-foreground">
+                            Bazar ortalaması
+                          </span>
+                          <span className="font-medium">
+                            {result.price.average.toLocaleString()} AZN (
+                            {result.price.deviation > 0 ? "+" : ""}
+                            {result.price.deviation.toFixed(1)}%)
+                          </span>
                         </div>
                       )}
                       <div className="space-y-2">
                         {scoreBreakdownConfig.map(({ key, label, max }) => (
                           <div key={key} className="space-y-1">
                             <div className="flex justify-between text-xs">
-                              <span className="text-muted-foreground">{label}</span>
-                              <span>{result.scoreBreakdown[key]}/{max}</span>
+                              <span className="text-muted-foreground">
+                                {label}
+                              </span>
+                              <span>
+                                {result.scoreBreakdown[key as keyof typeof result.scoreBreakdown]}
+                                /{max}
+                              </span>
                             </div>
                             <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-primary rounded-full"
-                                style={{ width: `${(result.scoreBreakdown[key] / max) * 100}%` }}
+                                style={{
+                                  width: `${
+                                    (result.scoreBreakdown[key as keyof typeof result.scoreBreakdown] / max) * 100
+                                  }%`,
+                                }}
                               />
                             </div>
                           </div>
@@ -186,10 +198,15 @@ export default function HistoryPage() {
               <Button
                 variant="outline"
                 className="w-full h-12 rounded-xl"
-                onClick={(e) => { e.stopPropagation(); setPage((p) => p + 1); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPage((p) => p + 1);
+                }}
                 disabled={loading}
               >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : null}
                 Daha çox
               </Button>
             )}
