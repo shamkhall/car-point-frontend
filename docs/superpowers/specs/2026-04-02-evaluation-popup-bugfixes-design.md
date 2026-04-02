@@ -42,73 +42,15 @@
 
 ### Frontend
 
-- Pass `evaluationRequest: EvaluateRequest` and `evaluationResult: EvaluationResult` from `CarEvaluationWizard` into `AccountPrompt` as props.
-- On successful sign-in (Google, Apple, or phone) inside `AccountPrompt`, call `saveEvaluation(request, result)` before calling `onClose`.
-- Add `saveEvaluation` function to `lib/api.ts`:
-  ```ts
-  export async function saveEvaluation(
-    request: EvaluateRequest,
-    result: EvaluationResult
-  ): Promise<void> {
-    await apiFetch("/me/evaluations", {
-      method: "POST",
-      body: JSON.stringify({ request, result }),
-    });
-  }
-  ```
+- Pass the `EvaluateRequest` data from `CarEvaluationWizard` into `AccountPrompt` as a prop.
+- On successful sign-in (Google, Apple, or phone) inside `AccountPrompt`, re-call the existing `evaluate(request)` function from `lib/api.ts`. Since the user is now authenticated, `getAuthHeaders()` will attach the Bearer token, and the API will save the evaluation to the user's history automatically.
+- No new API endpoint or function needed — we reuse the existing `evaluate()`.
 
-### API Side (spec for backend team)
+### API Side
 
-- **New endpoint:** `POST /me/evaluations`
-- **Auth:** Required (Bearer token)
-- **Request body:**
-  ```json
-  {
-    "request": {
-      "brand": "string",
-      "model": "string",
-      "year": "number",
-      "bodyType": "string",
-      "color": "string",
-      "engine": "string",
-      "mileage": "number",
-      "transmission": "string",
-      "drive": "string",
-      "isNew": "boolean",
-      "numberOfSeats": "number",
-      "condition": "string",
-      "market": "string",
-      "city": "string",
-      "price": "number"
-    },
-    "result": {
-      "qualityScore": "number",
-      "qualityStatus": "number",
-      "price": {
-        "listed": "number",
-        "average": "number | null",
-        "deviation": "number",
-        "priceStatus": "number"
-      },
-      "scoreBreakdown": {
-        "mileageScore": "number",
-        "ageScore": "number",
-        "reliabilityScore": "number",
-        "conditionScore": "number",
-        "depreciationScore": "number",
-        "transmissionScore": "number",
-        "driveScore": "number",
-        "engineScore": "number"
-      }
-    }
-  }
-  ```
-- **Behavior:** Saves the evaluation to the authenticated user's history. Uses the same schema as entries returned by `GET /me/evaluations`. Fields `_id` and `createdAt` are generated server-side.
-- **Response:** `201 Created` with `{ data: { _id, request, result, createdAt } }`
-- **Duplicate handling:** Allow duplicates — user may evaluate the same car multiple times.
-- **Validation:** Validate that request body contains all required fields with correct types. Return `400` for malformed requests.
+- **No changes needed.** `POST /evaluate` already saves to the user's history when an authenticated request (with Bearer token) is made.
 
-**Files changed:** `components/car-evaluation-wizard.tsx`, `components/steps/account-prompt.tsx`, `lib/api.ts`
+**Files changed:** `components/car-evaluation-wizard.tsx`, `components/steps/account-prompt.tsx`
 
 ---
 
@@ -131,8 +73,7 @@
 | File | Changes |
 |---|---|
 | `components/car-evaluation-wizard.tsx` | Add dismissed ref (bug 1), pass evaluation data to AccountPrompt (bug 3) |
-| `components/steps/account-prompt.tsx` | Add phone auth form (bug 2), save evaluation on sign-in (bug 3) |
+| `components/steps/account-prompt.tsx` | Add phone auth form (bug 2), re-call evaluate on sign-in (bug 3) |
 | `components/phone-auth-form.tsx` | **New** — shared phone/OTP form component (bug 2) |
 | `components/auth-modal.tsx` | Replace inline phone UI with PhoneAuthForm (bug 2) |
 | `components/auth-provider.tsx` | RecaptchaVerifier singleton (bug 4) |
-| `lib/api.ts` | Add `saveEvaluation()` function (bug 3) |
