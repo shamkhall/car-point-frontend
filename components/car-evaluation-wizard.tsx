@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LandingStep } from "./steps/landing-step";
 import { BrandModelStep } from "./steps/brand-model-step";
@@ -73,6 +73,8 @@ export function CarEvaluationWizard() {
   const [evaluating, setEvaluating] = useState(false);
   const [evaluationError, setEvaluationError] = useState<string | null>(null);
 
+  const accountPromptTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const updateFormData = (updates: Partial<CarFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
@@ -90,6 +92,10 @@ export function CarEvaluationWizard() {
   };
 
   const restart = () => {
+    if (accountPromptTimerRef.current) {
+      clearTimeout(accountPromptTimerRef.current);
+      accountPromptTimerRef.current = null;
+    }
     setDirection(-1);
     setFormData(initialFormData);
     setEvaluationResult(null);
@@ -149,13 +155,13 @@ export function CarEvaluationWizard() {
     }
   };
 
-  const handleResultsViewed = () => {
+  const handleResultsViewed = useCallback(() => {
     if (!user) {
-      setTimeout(() => {
+      accountPromptTimerRef.current = setTimeout(() => {
         setShowAccountPrompt(true);
       }, 3000);
     }
-  };
+  }, [user]);
 
   const variants = {
     enter: (direction: number) => ({

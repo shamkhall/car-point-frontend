@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, TrendingDown, TrendingUp, Minus } from "lucide-react";
 import type { EvaluationResult } from "@/lib/api";
@@ -52,8 +52,13 @@ function AnimatedNumber({
 export function ResultsStep({ formData, result, onResultsViewed, onRestart }: ResultsStepProps) {
   const [showBreakdown, setShowBreakdown] = useState(false);
 
+  const hasNotified = useRef(false);
+
   useEffect(() => {
-    onResultsViewed();
+    if (!hasNotified.current) {
+      hasNotified.current = true;
+      onResultsViewed();
+    }
     const timer = setTimeout(() => setShowBreakdown(true), 2500);
     return () => clearTimeout(timer);
   }, [onResultsViewed]);
