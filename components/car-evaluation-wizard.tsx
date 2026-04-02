@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LandingStep } from "./steps/landing-step";
 import { BrandModelStep } from "./steps/brand-model-step";
@@ -58,6 +58,8 @@ export function CarEvaluationWizard() {
   const [evaluationResult, setEvaluationResult] = useState<EvaluationResult | null>(null);
   const [evaluating, setEvaluating] = useState(false);
   const [evaluationError, setEvaluationError] = useState<string | null>(null);
+  const accountPromptDismissed = useRef(false);
+  const [lastEvaluationRequest, setLastEvaluationRequest] = useState<EvaluateRequest | null>(null);
 
   const totalSteps = 7;
 
@@ -108,24 +110,31 @@ export function CarEvaluationWizard() {
       price: formData.askingPrice!,
     };
 
+    setLastEvaluationRequest(request);
+
     try {
       const result = await evaluate(request);
       setEvaluationResult(result);
       setDirection(1);
       setCurrentStep(7);
     } catch {
-      setEvaluationError("Unable to evaluate. Please try again.");
+      setEvaluationError("Qiymətləndirmə mümkün olmadı. Yenidən cəhd edin.");
     } finally {
       setEvaluating(false);
     }
   };
 
   const handleResultsViewed = () => {
-    if (!user) {
+    if (!user && !accountPromptDismissed.current) {
       setTimeout(() => {
         setShowAccountPrompt(true);
       }, 3000);
     }
+  };
+
+  const handleAccountPromptClose = () => {
+    accountPromptDismissed.current = true;
+    setShowAccountPrompt(false);
   };
 
   const variants = {
@@ -248,7 +257,10 @@ export function CarEvaluationWizard() {
 
       <AnimatePresence>
         {showAccountPrompt && currentStep === 7 && (
-          <AccountPrompt onClose={() => setShowAccountPrompt(false)} />
+          <AccountPrompt
+            onClose={handleAccountPromptClose}
+            evaluationRequest={lastEvaluationRequest}
+          />
         )}
       </AnimatePresence>
     </div>
