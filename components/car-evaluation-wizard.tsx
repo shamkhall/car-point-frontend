@@ -99,25 +99,42 @@ export function CarEvaluationWizard() {
   };
 
   const handleEvaluate = async () => {
+    if (
+      !formData.year ||
+      (!formData.isBrandNew && formData.mileage === null) ||
+      !formData.condition ||
+      !formData.engineType ||
+      !formData.transmission ||
+      !formData.driveType ||
+      !formData.bodyType ||
+      !formData.color ||
+      formData.numberOfSeats === null ||
+      !formData.city ||
+      formData.askingPrice === null
+    ) {
+      setEvaluationError("Please complete all fields before evaluating.");
+      return;
+    }
+
     setEvaluating(true);
     setEvaluationError(null);
 
     const request: EvaluateRequest = {
       brand: formData.brand,
       model: formData.model,
-      year: formData.year!,
-      bodyType: formData.bodyType as string,
-      color: formData.color as string,
-      engine: formData.engineType as string,
-      mileage: formData.isBrandNew ? 0 : formData.mileage!,
-      transmission: formData.transmission as string,
-      drive: (formData.driveType as string).toUpperCase(),
+      year: formData.year,
+      bodyType: formData.bodyType,
+      color: formData.color,
+      engine: formData.engineType,
+      mileage: formData.isBrandNew ? 0 : formData.mileage,
+      transmission: formData.transmission,
+      drive: formData.driveType,
       isNew: formData.isBrandNew,
-      numberOfSeats: formData.numberOfSeats!,
-      condition: formData.condition as string,
+      numberOfSeats: formData.numberOfSeats,
+      condition: formData.condition,
       market: "turbo.az",
-      city: formData.city as string,
-      price: formData.askingPrice!,
+      city: formData.city,
+      price: formData.askingPrice,
     };
 
     try {
