@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuth } from "./auth-provider";
-import { Phone, Loader2 } from "lucide-react";
-import type { ConfirmationResult } from "firebase/auth";
+import { Loader2 } from "lucide-react";
+import { PhoneAuthForm } from "./phone-auth-form";
 
 interface AuthModalProps {
   open: boolean;
@@ -19,14 +18,8 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ open, onOpenChange }: AuthModalProps) {
-  const { signInWithGoogle, signInWithApple, signInWithPhone, confirmPhoneCode } =
-    useAuth();
+  const { signInWithGoogle, signInWithApple } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [showOtp, setShowOtp] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [confirmationResult, setConfirmationResult] =
-    useState<ConfirmationResult | null>(null);
   const [error, setError] = useState("");
 
   const handleGoogle = async () => {
@@ -36,7 +29,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       await signInWithGoogle();
       onOpenChange(false);
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to sign in";
+      const message = e instanceof Error ? e.message : "Daxil olmaq mümkün olmadı";
       setError(message);
     } finally {
       setLoading(false);
@@ -50,38 +43,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       await signInWithApple();
       onOpenChange(false);
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to sign in";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSendCode = async () => {
-    if (!phoneNumber) return;
-    setLoading(true);
-    setError("");
-    try {
-      const result = await signInWithPhone(phoneNumber);
-      setConfirmationResult(result);
-      setShowOtp(true);
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to send code";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    if (!confirmationResult || !otpCode) return;
-    setLoading(true);
-    setError("");
-    try {
-      await confirmPhoneCode(confirmationResult, otpCode);
-      onOpenChange(false);
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Invalid code";
+      const message = e instanceof Error ? e.message : "Daxil olmaq mümkün olmadı";
       setError(message);
     } finally {
       setLoading(false);
@@ -89,10 +51,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   };
 
   const resetState = () => {
-    setPhoneNumber("");
-    setShowOtp(false);
-    setOtpCode("");
-    setConfirmationResult(null);
     setError("");
     setLoading(false);
   };
@@ -107,7 +65,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
     >
       <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl">Sign In</DialogTitle>
+          <DialogTitle className="text-center text-xl">Daxil ol</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
@@ -143,7 +101,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 />
               </svg>
             )}
-            Continue with Google
+            Google ilə davam et
           </Button>
 
           <Button
@@ -159,7 +117,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             >
               <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
             </svg>
-            Continue with Apple
+            Apple ilə davam et
           </Button>
 
           <div className="relative py-2">
@@ -168,62 +126,15 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                or
+                və ya
               </span>
             </div>
           </div>
 
-          {!showOtp ? (
-            <div className="flex gap-2">
-              <Input
-                type="tel"
-                placeholder="+994 XX XXX XX XX"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="h-12 rounded-xl flex-1"
-                disabled={loading}
-              />
-              <Button
-                onClick={handleSendCode}
-                disabled={loading || !phoneNumber}
-                className="h-12 rounded-xl px-4"
-              >
-                {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Phone className="w-4 h-4" />
-                )}
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground text-center">
-                Enter the code sent to {phoneNumber}
-              </p>
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  placeholder="Enter 6-digit code"
-                  value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value)}
-                  className="h-12 rounded-xl flex-1 text-center text-lg tracking-widest"
-                  maxLength={6}
-                  disabled={loading}
-                />
-                <Button
-                  onClick={handleVerifyCode}
-                  disabled={loading || otpCode.length < 6}
-                  className="h-12 rounded-xl px-6"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Verify"
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
+          <PhoneAuthForm
+            onSuccess={() => onOpenChange(false)}
+            disabled={loading}
+          />
         </div>
       </DialogContent>
     </Dialog>
