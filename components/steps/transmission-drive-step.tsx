@@ -36,16 +36,16 @@ export function TransmissionDriveStep({
         <div className="w-full space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Transmission & Drive
+              Ötürmə və Çəkiş
             </h2>
             <p className="text-muted-foreground">
-              Select the transmission and drivetrain
+              Ötürmə qutusu və çəkiş tipini seçin
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-3">
-              <span className="text-base font-medium">Transmission</span>
+              <span className="text-base font-medium">Ötürmə qutusu</span>
               <div className="grid grid-cols-3 gap-3">
                 {transmissions.map((trans) => {
                   const isSelected = formData.transmission === trans.value;
@@ -74,7 +74,7 @@ export function TransmissionDriveStep({
             </div>
 
             <div className="space-y-3">
-              <span className="text-base font-medium">Drive Type</span>
+              <span className="text-base font-medium">Çəkiş tipi</span>
               <div className="grid grid-cols-3 gap-3">
                 {driveTypes.map((drive) => {
                   const isSelected = formData.driveType === drive.value;
@@ -115,14 +115,14 @@ export function TransmissionDriveStep({
           className="h-12 px-4 rounded-xl"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          Geri
         </Button>
         <Button
           onClick={onNext}
           disabled={!canContinue}
           className="h-12 px-6 rounded-xl"
         >
-          Continue
+          Davam
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

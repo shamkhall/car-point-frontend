@@ -1,64 +1,64 @@
 export const conditions = [
-  { value: "excellent", label: "Excellent", description: "Like new, no visible wear" },
-  { value: "good", label: "Good", description: "Minor wear, well maintained" },
-  { value: "fair", label: "Fair", description: "Some wear and small issues" },
-  { value: "poor", label: "Poor", description: "Significant wear or damage" },
+  { value: "excellent", label: "Əla", description: "Yeni kimi, görünən aşınma yoxdur" },
+  { value: "good", label: "Yaxşı", description: "Cüzi aşınma, yaxşı baxılıb" },
+  { value: "fair", label: "Orta", description: "Müəyyən aşınma və kiçik problemlər" },
+  { value: "poor", label: "Pis", description: "Əhəmiyyətli aşınma və ya zədə" },
 ] as const;
 
 export const engineTypes = [
-  { value: "petrol", label: "Petrol" },
-  { value: "diesel", label: "Diesel" },
-  { value: "hybrid", label: "Hybrid" },
-  { value: "LPG", label: "LPG" },
+  { value: "petrol", label: "Benzin" },
+  { value: "diesel", label: "Dizel" },
+  { value: "hybrid", label: "Hibrid" },
+  { value: "LPG", label: "Qaz (LPG)" },
 ] as const;
 
 export const transmissions = [
-  { value: "automatic", label: "Automatic" },
-  { value: "manual", label: "Manual" },
-  { value: "semi-automatic", label: "Semi-Auto" },
+  { value: "automatic", label: "Avtomat" },
+  { value: "manual", label: "Mexaniki" },
+  { value: "semi-automatic", label: "Yarı-avtomat" },
 ] as const;
 
 export const driveTypes = [
-  { value: "FWD", label: "FWD", description: "Front-Wheel Drive" },
-  { value: "RWD", label: "RWD", description: "Rear-Wheel Drive" },
-  { value: "AWD", label: "AWD", description: "All-Wheel Drive" },
+  { value: "FWD", label: "ÖÇ", description: "Ön çəkiş" },
+  { value: "RWD", label: "AÇ", description: "Arxa çəkiş" },
+  { value: "AWD", label: "TÇ", description: "Tam çəkiş" },
 ] as const;
 
 export const bodyTypes = [
   { value: "sedan", label: "Sedan" },
-  { value: "suv", label: "SUV" },
-  { value: "hatchback", label: "Hatchback" },
-  { value: "coupe", label: "Coupe" },
-  { value: "wagon", label: "Wagon" },
-  { value: "convertible", label: "Convertible" },
-  { value: "van", label: "Van" },
-  { value: "pickup", label: "Pickup" },
+  { value: "suv", label: "Yolsuzluq" },
+  { value: "hatchback", label: "Hetçbek" },
+  { value: "coupe", label: "Kupe" },
+  { value: "wagon", label: "Universal" },
+  { value: "convertible", label: "Kabriolet" },
+  { value: "van", label: "Furqon" },
+  { value: "pickup", label: "Pikap" },
 ] as const;
 
 export const colors = [
-  { value: "white", label: "White" },
-  { value: "black", label: "Black" },
-  { value: "silver", label: "Silver" },
-  { value: "gray", label: "Gray" },
-  { value: "blue", label: "Blue" },
-  { value: "red", label: "Red" },
-  { value: "green", label: "Green" },
-  { value: "brown", label: "Brown" },
-  { value: "beige", label: "Beige" },
-  { value: "orange", label: "Orange" },
-  { value: "yellow", label: "Yellow" },
-  { value: "other", label: "Other" },
+  { value: "white", label: "Ağ" },
+  { value: "black", label: "Qara" },
+  { value: "silver", label: "Gümüşü" },
+  { value: "gray", label: "Boz" },
+  { value: "blue", label: "Göy" },
+  { value: "red", label: "Qırmızı" },
+  { value: "green", label: "Yaşıl" },
+  { value: "brown", label: "Qəhvəyi" },
+  { value: "beige", label: "Bej" },
+  { value: "orange", label: "Narıncı" },
+  { value: "yellow", label: "Sarı" },
+  { value: "other", label: "Digər" },
 ] as const;
 
 export const cities = [
-  { value: "Baku", label: "Baku" },
-  { value: "Ganja", label: "Ganja" },
-  { value: "Sumgait", label: "Sumgait" },
-  { value: "Mingachevir", label: "Mingachevir" },
-  { value: "Lankaran", label: "Lankaran" },
-  { value: "Shirvan", label: "Shirvan" },
-  { value: "Shaki", label: "Shaki" },
-  { value: "Other", label: "Other" },
+  { value: "Baku", label: "Bakı" },
+  { value: "Ganja", label: "Gəncə" },
+  { value: "Sumgait", label: "Sumqayıt" },
+  { value: "Mingachevir", label: "Mingəçevir" },
+  { value: "Lankaran", label: "Lənkəran" },
+  { value: "Shirvan", label: "Şirvan" },
+  { value: "Shaki", label: "Şəki" },
+  { value: "Other", label: "Digər" },
 ] as const;
 
 export type Condition = (typeof conditions)[number]["value"];

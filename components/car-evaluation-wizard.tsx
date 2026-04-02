@@ -161,7 +161,7 @@ export function CarEvaluationWizard() {
   };
 
   const handleResultsViewed = useCallback(() => {
-    if (!user) {
+    if (!user && !accountPromptDismissed.current) {
       accountPromptTimerRef.current = setTimeout(() => {
         setShowAccountPrompt(true);
       }, 3000);

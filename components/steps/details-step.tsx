@@ -49,16 +49,16 @@ export function DetailsStep({
         <div className="w-full space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              A few more details
+              Bir neçə əlavə məlumat
             </h2>
             <p className="text-muted-foreground">
-              Tell us about the body type, color, and location
+              Kuzov tipi, rəng və şəhəri qeyd edin
             </p>
           </div>
 
           <div className="space-y-5">
             <div className="space-y-2">
-              <Label className="text-base font-medium">Body Type</Label>
+              <Label className="text-base font-medium">Kuzov tipi</Label>
               <div className="grid grid-cols-4 gap-2">
                 {bodyTypes.map((type) => (
                   <button
@@ -77,13 +77,13 @@ export function DetailsStep({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-base font-medium">Color</Label>
+              <Label className="text-base font-medium">Rəng</Label>
               <Select
                 value={formData.color}
                 onValueChange={(color) => onUpdate({ color: color as typeof formData.color })}
               >
                 <SelectTrigger className="h-14 text-base rounded-xl">
-                  <SelectValue placeholder="Select color" />
+                  <SelectValue placeholder="Rəng seçin" />
                 </SelectTrigger>
                 <SelectContent>
                   {colors.map((c) => (
@@ -97,7 +97,7 @@ export function DetailsStep({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-base font-medium">Seats</Label>
+                <Label className="text-base font-medium">Oturacaq</Label>
                 <Input
                   type="number"
                   placeholder="5"
@@ -114,13 +114,13 @@ export function DetailsStep({
               </div>
 
               <div className="space-y-2">
-                <Label className="text-base font-medium">City</Label>
+                <Label className="text-base font-medium">Şəhər</Label>
                 <Select
                   value={formData.city}
                   onValueChange={(city) => onUpdate({ city: city as typeof formData.city })}
                 >
                   <SelectTrigger className="h-14 text-base rounded-xl">
-                    <SelectValue placeholder="Select city" />
+                    <SelectValue placeholder="Şəhər seçin" />
                   </SelectTrigger>
                   <SelectContent>
                     {cities.map((c) => (
@@ -139,10 +139,10 @@ export function DetailsStep({
       <div className="flex items-center justify-between pt-8 max-w-md mx-auto w-full">
         <Button variant="ghost" onClick={onBack} className="h-12 px-4 rounded-xl">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          Geri
         </Button>
         <Button onClick={onNext} disabled={!canContinue} className="h-12 px-6 rounded-xl">
-          Continue
+          Davam
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

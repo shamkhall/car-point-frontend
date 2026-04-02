@@ -119,20 +119,20 @@ export default function GlobalError({
             <div className="error-icon">!</div>
             <div>
               <p className="error-message">
-                An application error has occurred while loading{' '}
+                Yüklənərkən tətbiqdə xəta baş verdi{' '}
                 <code>{pathname || '/'}</code>
               </p>
             </div>
           </div>
           <div className="error-summary">
-            {error.message || 'Unknown error'}
+            {error.message || 'Naməlum xəta'}
           </div>
           {error.stack && (
             <div className="error-details-wrapper">
               <details className="error-details">
                 <summary>
                   <span className="chevron">▼</span>
-                  View full error trace
+                  Tam xəta izini göstər
                 </summary>
               </details>
               <div className="error-stack-slot">

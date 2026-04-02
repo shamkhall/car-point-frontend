@@ -55,10 +55,10 @@ export function YearMileageStep({
         <div className="w-full space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              When was it made?
+              Nə vaxt istehsal olunub?
             </h2>
             <p className="text-muted-foreground">
-              Tell us about the year and mileage
+              İl və yürüşü qeyd edin
             </p>
           </div>
 
@@ -66,7 +66,7 @@ export function YearMileageStep({
             <div className="flex items-center justify-between p-4 bg-secondary rounded-xl">
               <div className="flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-foreground" />
-                <span className="font-medium">Brand new car</span>
+                <span className="font-medium">Yeni maşın</span>
               </div>
               <Switch
                 checked={formData.isBrandNew}
@@ -76,14 +76,14 @@ export function YearMileageStep({
 
             <div className="space-y-2">
               <Label htmlFor="year" className="text-base font-medium">
-                Year
+                İl
               </Label>
               <Select
                 value={formData.year?.toString() || ""}
                 onValueChange={(year) => onUpdate({ year: parseInt(year) })}
               >
                 <SelectTrigger id="year" className="h-14 text-base rounded-xl">
-                  <SelectValue placeholder="Select year" />
+                  <SelectValue placeholder="İl seçin" />
                 </SelectTrigger>
                 <SelectContent>
                   {years.map((year) => (
@@ -98,13 +98,13 @@ export function YearMileageStep({
             {!formData.isBrandNew && (
               <div className="space-y-2">
                 <Label htmlFor="mileage" className="text-base font-medium">
-                  Mileage
+                  Yürüş
                 </Label>
                 <div className="relative">
                   <Input
                     id="mileage"
                     type="number"
-                    placeholder="Enter mileage"
+                    placeholder="Yürüşü daxil edin"
                     value={formData.mileage ?? ""}
                     min={0}
                     onChange={(e) => onUpdate({ mileage: e.target.value ? Math.max(0, parseInt(e.target.value)) : null })}
@@ -127,14 +127,14 @@ export function YearMileageStep({
           className="h-12 px-4 rounded-xl"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          Geri
         </Button>
         <Button
           onClick={onNext}
           disabled={!canContinue}
           className="h-12 px-6 rounded-xl"
         >
-          Continue
+          Davam
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

@@ -85,17 +85,17 @@ export function BrandModelStep({
         <div className="w-full space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              What car are you looking at?
+              Hansı maşına baxırsınız?
             </h2>
             <p className="text-muted-foreground">
-              Select the brand and model
+              Marka və modeli seçin
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="brand" className="text-base font-medium">
-                Brand
+                Marka
               </Label>
               {loadingBrands ? (
                 <div className="h-14 flex items-center justify-center">
@@ -114,7 +114,7 @@ export function BrandModelStep({
                   onValueChange={handleBrandChange}
                 >
                   <SelectTrigger id="brand" className="h-14 text-base rounded-xl">
-                    <SelectValue placeholder="Select a brand" />
+                    <SelectValue placeholder="Marka seçin" />
                   </SelectTrigger>
                   <SelectContent>
                     {brands.map((brand) => (
@@ -149,7 +149,7 @@ export function BrandModelStep({
                   disabled={!formData.brand}
                 >
                   <SelectTrigger id="model" className="h-14 text-base rounded-xl">
-                    <SelectValue placeholder={formData.brand ? "Select a model" : "Select brand first"} />
+                    <SelectValue placeholder={formData.brand ? "Model seçin" : "Əvvəlcə marka seçin"} />
                   </SelectTrigger>
                   <SelectContent>
                     {models.map((model) => (
@@ -172,14 +172,14 @@ export function BrandModelStep({
           className="h-12 px-4 rounded-xl"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          Geri
         </Button>
         <Button
           onClick={onNext}
           disabled={!canContinue}
           className="h-12 px-6 rounded-xl"
         >
-          Continue
+          Davam
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

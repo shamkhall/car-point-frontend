@@ -12,7 +12,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
     <div className="w-full max-w-md mx-auto">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-muted-foreground">
-          Step {currentStep} of {totalSteps}
+          Addım {currentStep} / {totalSteps}
         </span>
         <span className="text-sm font-medium text-foreground">
           {Math.round(progress)}%

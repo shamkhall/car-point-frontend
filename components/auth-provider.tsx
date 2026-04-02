@@ -35,8 +35,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-let cachedRecaptchaVerifier: RecaptchaVerifier | null = null;
-
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
@@ -81,11 +79,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     phoneNumber: string
   ): Promise<ConfirmationResult> => {
     if (!recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "invisible",
-      });
+      recaptchaVerifierRef.current = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "invisible",
+        }
+      );
     }
-    return signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifierRef.current);
+    return signInWithPhoneNumber(
+      auth,
+      phoneNumber,
+      recaptchaVerifierRef.current
+    );
   };
 
   const confirmPhoneCode = async (

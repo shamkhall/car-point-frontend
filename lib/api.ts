@@ -24,10 +24,15 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   });
 
   if (!res.ok) {
+<<<<<<< Updated upstream
     const error = await res.json().catch(() => ({ message: "Request failed" }));
     const err = new Error(error.message || `HTTP ${res.status}`);
     (err as Error & { status: number }).status = res.status;
     throw err;
+=======
+    const error = await res.json().catch(() => ({ message: "Sorğu uğursuz oldu" }));
+    throw new Error(error.message || `HTTP ${res.status}`);
+>>>>>>> Stashed changes
   }
 
   return res.json();

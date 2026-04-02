@@ -8,7 +8,24 @@ import { useAuth } from "@/components/auth-provider";
 import { getEvaluations, type EvaluationHistoryItem } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+<<<<<<< Updated upstream
 import { qualityLabels, qualityBadgeColors, priceLabels, priceBadgeColors, scoreBreakdownConfig } from "@/lib/evaluation-labels";
+=======
+
+const qualityLabels: Record<number, string> = { 0: "Yaxşı", 1: "Pis", 2: "Əla" };
+const qualityBadgeColors: Record<number, string> = {
+  0: "bg-warning/20 text-warning-foreground",
+  1: "bg-destructive/20 text-destructive",
+  2: "bg-success/20 text-success",
+};
+
+const priceLabels: Record<number, string> = { 0: "Normal qiymət", 1: "Əla sövdələşmə", 2: "Bahadır" };
+const priceBadgeColors: Record<number, string> = {
+  0: "bg-muted text-muted-foreground",
+  1: "bg-success/20 text-success",
+  2: "bg-destructive/20 text-destructive",
+};
+>>>>>>> Stashed changes
 
 export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
@@ -55,6 +72,20 @@ export default function HistoryPage() {
     );
   }
 
+<<<<<<< Updated upstream
+=======
+  const breakdownLabels = [
+    { key: "mileageScore", label: "Yürüş", max: 25 },
+    { key: "reliabilityScore", label: "Etibarlılıq", max: 20 },
+    { key: "ageScore", label: "Yaş", max: 15 },
+    { key: "conditionScore", label: "Vəziyyət", max: 15 },
+    { key: "depreciationScore", label: "Amortizasiya", max: 10 },
+    { key: "transmissionScore", label: "Ötürmə", max: 5 },
+    { key: "driveScore", label: "Çəkiş", max: 5 },
+    { key: "engineScore", label: "Mühərrik", max: 5 },
+  ] as const;
+
+>>>>>>> Stashed changes
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-background">
       <div className="max-w-2xl mx-auto px-4 py-8">
@@ -62,12 +93,12 @@ export default function HistoryPage() {
           <Link href="/">
             <Button variant="ghost" size="sm" className="rounded-xl">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              Geri
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">Evaluation History</h1>
-            <p className="text-sm text-muted-foreground">{total} evaluation{total !== 1 ? "s" : ""}</p>
+            <h1 className="text-2xl font-bold">Qiymətləndirmə tarixçəsi</h1>
+            <p className="text-sm text-muted-foreground">{total} qiymətləndirmə</p>
           </div>
         </div>
 
@@ -85,8 +116,8 @@ export default function HistoryPage() {
           </div>
         ) : evaluations.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
-            <p className="text-lg mb-2">No evaluations yet</p>
-            <p className="text-sm">Go evaluate a car to see it here!</p>
+            <p className="text-lg mb-2">Hələ qiymətləndirmə yoxdur</p>
+            <p className="text-sm">Burada görmək üçün maşın qiymətləndirin!</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -125,7 +156,7 @@ export default function HistoryPage() {
                     <div className="px-4 pb-4 border-t border-border pt-4 space-y-3">
                       {result.price.average != null && (
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Market Average</span>
+                          <span className="text-muted-foreground">Bazar ortalaması</span>
                           <span className="font-medium">{result.price.average.toLocaleString()} AZN ({result.price.deviation > 0 ? "+" : ""}{result.price.deviation.toFixed(1)}%)</span>
                         </div>
                       )}
@@ -159,7 +190,7 @@ export default function HistoryPage() {
                 disabled={loading}
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                Load More
+                Daha çox
               </Button>
             )}
           </div>

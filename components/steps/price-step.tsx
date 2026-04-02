@@ -40,22 +40,22 @@ export function PriceStep({
         <div className="w-full space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              What&apos;s the asking price?
+              Qiymət nə qədərdir?
             </h2>
             <p className="text-muted-foreground">
-              Enter the price to see if it&apos;s a good deal
+              Sövdələşmənin yaxşı olub-olmadığını görmək üçün qiyməti daxil edin
             </p>
           </div>
 
           <div className="space-y-4">
             <Label htmlFor="price" className="text-base font-medium">
-              Price
+              Qiymət
             </Label>
             <div className="relative">
               <Input
                 id="price"
                 type="number"
-                placeholder="Enter asking price"
+                placeholder="Qiyməti daxil edin"
                 value={formData.askingPrice ?? ""}
                 min={1}
                 onChange={(e) => onUpdate({ askingPrice: e.target.value ? Math.max(1, parseInt(e.target.value)) : null })}
@@ -82,7 +82,7 @@ export function PriceStep({
             ) : (
               <Sparkles className="w-5 h-5 mr-2" />
             )}
-            {loading ? "Evaluating..." : "Get Results"}
+            {loading ? "Qiymətləndirilir..." : "Nəticəni gör"}
           </Button>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function PriceStep({
           disabled={loading}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          Geri
         </Button>
       </div>
     </div>

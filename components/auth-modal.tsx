@@ -64,7 +64,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             <AppleIcon className="w-5 h-5 mr-2" />
             Apple ilə davam et
           </Button>
-
           <div className="relative py-2">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-border" />

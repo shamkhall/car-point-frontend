@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X, Bookmark, TrendingUp, Loader2 } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
-import { PhoneAuthForm } from "@/components/phone-auth-form";
 import { evaluate, type EvaluateRequest } from "@/lib/api";
 import { GoogleIcon } from "@/components/icons/google-icon";
 import { AppleIcon } from "@/components/icons/apple-icon";
@@ -45,11 +44,6 @@ export function AccountPrompt({
 
   const handleApple = () => {
     handleAppleSignIn();
-  };
-
-  const handlePhoneSuccess = async () => {
-    await saveEvaluation();
-    onClose();
   };
 
   return (
@@ -124,26 +118,10 @@ export function AccountPrompt({
             Apple ilə davam et
           </Button>
 
-          <div className="relative py-2">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                və ya
-              </span>
-            </div>
-          </div>
-
-          <PhoneAuthForm
-            onSuccess={handlePhoneSuccess}
-            disabled={loading}
-          />
-
           <Button
             variant="ghost"
             onClick={onClose}
-            className="w-full h-12 rounded-xl text-base text-muted-foreground"
+            className="w-full h-12 rounded-xl text-base text-muted-foreground mt-4"
           >
             Xeyr, sağ ol
           </Button>

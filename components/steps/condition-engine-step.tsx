@@ -43,16 +43,16 @@ export function ConditionEngineStep({
         <div className="w-full space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              What&apos;s the condition?
+              Vəziyyəti necədir?
             </h2>
             <p className="text-muted-foreground">
-              Rate the car&apos;s condition and engine type
+              Maşının vəziyyətini və mühərrik tipini seçin
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-3">
-              <span className="text-base font-medium">Condition</span>
+              <span className="text-base font-medium">Vəziyyət</span>
               <div className="grid grid-cols-2 gap-3">
                 {conditions.map((condition) => {
                   const Icon = conditionIcons[condition.value as Condition];
@@ -89,7 +89,7 @@ export function ConditionEngineStep({
             </div>
 
             <div className="space-y-3">
-              <span className="text-base font-medium">Engine Type</span>
+              <span className="text-base font-medium">Mühərrik tipi</span>
               <div className="flex flex-wrap gap-2">
                 {engineTypes.map((engine) => {
                   const isSelected = formData.engineType === engine.value;
@@ -122,14 +122,14 @@ export function ConditionEngineStep({
           className="h-12 px-4 rounded-xl"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          Geri
         </Button>
         <Button
           onClick={onNext}
           disabled={!canContinue}
           className="h-12 px-6 rounded-xl"
         >
-          Continue
+          Davam
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
