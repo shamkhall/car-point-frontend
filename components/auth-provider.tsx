@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -45,12 +46,18 @@ export function useAuth() {
 }
 
 async function handlePostSignIn() {
-  await createProfile();
+  try {
+    await createProfile();
+  } catch {
+    // Profile creation failed, but don't block sign-in
+    console.warn("Failed to create user profile");
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -73,17 +80,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithPhone = async (
     phoneNumber: string
   ): Promise<ConfirmationResult> => {
-    if (cachedRecaptchaVerifier) {
-      try {
-        cachedRecaptchaVerifier.clear();
-      } catch {
-        // ignore clear errors
-      }
+    if (!recaptchaVerifierRef.current) {
+      recaptchaVerifierRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+      });
     }
-    cachedRecaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-      size: "invisible",
-    });
-    return signInWithPhoneNumber(auth, phoneNumber, cachedRecaptchaVerifier);
+    return signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifierRef.current);
   };
 
   const confirmPhoneCode = async (

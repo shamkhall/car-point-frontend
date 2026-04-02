@@ -36,15 +36,24 @@ export function BrandModelStep({
   const [models, setModels] = useState<string[]>([]);
   const [loadingBrands, setLoadingBrands] = useState(true);
   const [loadingModels, setLoadingModels] = useState(false);
+  const [brandsError, setBrandsError] = useState(false);
+  const [modelsError, setModelsError] = useState(false);
+  const [brandsFetchKey, setBrandsFetchKey] = useState(0);
+  const [modelsFetchKey, setModelsFetchKey] = useState(0);
 
   const canContinue = formData.brand && formData.model;
 
   useEffect(() => {
+    setLoadingBrands(true);
+    setBrandsError(false);
     getBrands()
       .then(setBrands)
-      .catch(() => setBrands([]))
+      .catch(() => {
+        setBrands([]);
+        setBrandsError(true);
+      })
       .finally(() => setLoadingBrands(false));
-  }, []);
+  }, [brandsFetchKey]);
 
   useEffect(() => {
     if (!formData.brand) {
@@ -52,11 +61,15 @@ export function BrandModelStep({
       return;
     }
     setLoadingModels(true);
+    setModelsError(false);
     getModels(formData.brand)
       .then(setModels)
-      .catch(() => setModels([]))
+      .catch(() => {
+        setModels([]);
+        setModelsError(true);
+      })
       .finally(() => setLoadingModels(false));
-  }, [formData.brand]);
+  }, [formData.brand, modelsFetchKey]);
 
   const handleBrandChange = (brand: string) => {
     onUpdate({ brand, model: "" });
@@ -88,6 +101,13 @@ export function BrandModelStep({
                 <div className="h-14 flex items-center justify-center">
                   <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                 </div>
+              ) : brandsError ? (
+                <div className="h-14 flex items-center justify-center gap-2">
+                  <span className="text-sm text-destructive">Failed to load brands</span>
+                  <Button variant="ghost" size="sm" onClick={() => setBrandsFetchKey((k) => k + 1)} className="text-sm">
+                    Retry
+                  </Button>
+                </div>
               ) : (
                 <Select
                   value={formData.brand}
@@ -114,6 +134,13 @@ export function BrandModelStep({
               {loadingModels ? (
                 <div className="h-14 flex items-center justify-center">
                   <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                </div>
+              ) : modelsError ? (
+                <div className="h-14 flex items-center justify-center gap-2">
+                  <span className="text-sm text-destructive">Failed to load models</span>
+                  <Button variant="ghost" size="sm" onClick={() => setModelsFetchKey((k) => k + 1)} className="text-sm">
+                    Retry
+                  </Button>
                 </div>
               ) : (
                 <Select
