@@ -7,12 +7,13 @@ import { BrandModelStep } from "./steps/brand-model-step";
 import { YearMileageStep } from "./steps/year-mileage-step";
 import { ConditionEngineStep } from "./steps/condition-engine-step";
 import { TransmissionDriveStep } from "./steps/transmission-drive-step";
+import { DetailsStep } from "./steps/details-step";
 import { PriceStep } from "./steps/price-step";
 import { ResultsStep } from "./steps/results-step";
 import { AccountPrompt } from "./steps/account-prompt";
 import { evaluate, type EvaluationResult, type EvaluateRequest } from "@/lib/api";
 import { useAuth } from "./auth-provider";
-import type { Condition, EngineType, Transmission, DriveType } from "@/lib/car-data";
+import type { Condition, EngineType, Transmission, DriveType, BodyType, Color, City } from "@/lib/car-data";
 
 export interface CarFormData {
   brand: string;
@@ -24,6 +25,10 @@ export interface CarFormData {
   engineType: EngineType | "";
   transmission: Transmission | "";
   driveType: DriveType | "";
+  bodyType: BodyType | "";
+  color: Color | "";
+  numberOfSeats: number | null;
+  city: City | "";
   askingPrice: number | null;
 }
 
@@ -37,6 +42,10 @@ const initialFormData: CarFormData = {
   engineType: "",
   transmission: "",
   driveType: "",
+  bodyType: "",
+  color: "",
+  numberOfSeats: null,
+  city: "",
   askingPrice: null,
 };
 
@@ -50,7 +59,7 @@ export function CarEvaluationWizard() {
   const [evaluating, setEvaluating] = useState(false);
   const [evaluationError, setEvaluationError] = useState<string | null>(null);
 
-  const totalSteps = 6;
+  const totalSteps = 7;
 
   const updateFormData = (updates: Partial<CarFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
@@ -58,7 +67,7 @@ export function CarEvaluationWizard() {
 
   const goToNext = () => {
     setDirection(1);
-    setCurrentStep((prev) => Math.min(prev + 1, 7));
+    setCurrentStep((prev) => Math.min(prev + 1, 8));
   };
 
   const goToPrevious = () => {
@@ -85,12 +94,17 @@ export function CarEvaluationWizard() {
       brand: formData.brand,
       model: formData.model,
       year: formData.year!,
+      bodyType: formData.bodyType as string,
+      color: formData.color as string,
       engine: formData.engineType as string,
       mileage: formData.isBrandNew ? 0 : formData.mileage!,
       transmission: formData.transmission as string,
       drive: (formData.driveType as string).toUpperCase(),
       isNew: formData.isBrandNew,
+      numberOfSeats: formData.numberOfSeats!,
       condition: formData.condition as string,
+      market: "turbo.az",
+      city: formData.city as string,
       price: formData.askingPrice!,
     };
 
@@ -98,7 +112,7 @@ export function CarEvaluationWizard() {
       const result = await evaluate(request);
       setEvaluationResult(result);
       setDirection(1);
-      setCurrentStep(6);
+      setCurrentStep(7);
     } catch {
       setEvaluationError("Unable to evaluate. Please try again.");
     } finally {
@@ -179,18 +193,29 @@ export function CarEvaluationWizard() {
         );
       case 5:
         return (
+          <DetailsStep
+            formData={formData}
+            onUpdate={updateFormData}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            currentStep={5}
+            totalSteps={totalSteps}
+          />
+        );
+      case 6:
+        return (
           <PriceStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={handleEvaluate}
             onBack={goToPrevious}
-            currentStep={5}
+            currentStep={6}
             totalSteps={totalSteps}
             loading={evaluating}
             error={evaluationError}
           />
         );
-      case 6:
+      case 7:
         return evaluationResult ? (
           <ResultsStep
             formData={formData}
@@ -222,7 +247,7 @@ export function CarEvaluationWizard() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showAccountPrompt && currentStep === 6 && (
+        {showAccountPrompt && currentStep === 7 && (
           <AccountPrompt onClose={() => setShowAccountPrompt(false)} />
         )}
       </AnimatePresence>
