@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/components/auth-provider'
 import { Header } from '@/components/header'
 import './globals.css'
@@ -9,8 +8,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'CarCheck - How Good Is Your Car Deal?',
-  description: 'Get an instant evaluation of any car deal in under 2 minutes. Check if the price is fair, compare to market averages, and make smarter buying decisions.',
+  title: "Kapot",
+  description: "Minimalist car evaluation and checking",
   generator: 'v0.app',
   icons: {
     icon: [
@@ -37,13 +36,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="az">
       <body className="font-sans antialiased">
         <AuthProvider>
           <Header />
           {children}
         </AuthProvider>
-        <Analytics />
       </body>
     </html>
   )
