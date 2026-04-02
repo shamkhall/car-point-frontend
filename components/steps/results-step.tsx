@@ -6,6 +6,7 @@ import { RotateCcw, TrendingDown, TrendingUp, Minus } from "lucide-react";
 import type { EvaluationResult } from "@/lib/api";
 import type { CarFormData } from "../car-evaluation-wizard";
 import { cn } from "@/lib/utils";
+import { qualityLabels, qualityFullColors, priceLabels, priceTextColors, scoreBreakdownConfig } from "@/lib/evaluation-labels";
 
 interface ResultsStepProps {
   formData: CarFormData;
@@ -47,17 +48,6 @@ function AnimatedNumber({
   return <span>{displayValue}</span>;
 }
 
-// qualityStatus: 0=GOOD, 1=POOR, 2=EXCELLENT
-const qualityLabels: Record<number, string> = { 0: "Good", 1: "Poor", 2: "Excellent" };
-const qualityColors: Record<number, string> = {
-  0: "bg-warning text-warning-foreground",
-  1: "bg-destructive text-destructive-foreground",
-  2: "bg-success text-success-foreground",
-};
-
-// priceStatus: 0=FAIR_PRICE, 1=GREAT_DEAL, 2=OVERPRICED
-const priceLabels: Record<number, string> = { 0: "Fair Price", 1: "Great Deal", 2: "Overpriced" };
-const priceColors: Record<number, string> = { 0: "text-foreground", 1: "text-success", 2: "text-destructive" };
 
 export function ResultsStep({ formData, result, onResultsViewed, onRestart }: ResultsStepProps) {
   const [showBreakdown, setShowBreakdown] = useState(false);
@@ -77,16 +67,11 @@ export function ResultsStep({ formData, result, onResultsViewed, onRestart }: Re
 
   const PriceIcon = price.deviation < 0 ? TrendingDown : price.deviation > 0 ? TrendingUp : Minus;
 
-  const breakdownItems = [
-    { category: "Mileage", score: scoreBreakdown.mileageScore, maxScore: 25 },
-    { category: "Reliability", score: scoreBreakdown.reliabilityScore, maxScore: 20 },
-    { category: "Age", score: scoreBreakdown.ageScore, maxScore: 15 },
-    { category: "Condition", score: scoreBreakdown.conditionScore, maxScore: 15 },
-    { category: "Depreciation", score: scoreBreakdown.depreciationScore, maxScore: 10 },
-    { category: "Transmission", score: scoreBreakdown.transmissionScore, maxScore: 5 },
-    { category: "Drive", score: scoreBreakdown.driveScore, maxScore: 5 },
-    { category: "Engine", score: scoreBreakdown.engineScore, maxScore: 5 },
-  ];
+  const breakdownItems = scoreBreakdownConfig.map((item) => ({
+    category: item.label,
+    score: scoreBreakdown[item.key],
+    maxScore: item.max,
+  }));
 
   return (
     <div className="flex-1 flex flex-col px-6 py-8 overflow-y-auto">
@@ -120,7 +105,7 @@ export function ResultsStep({ formData, result, onResultsViewed, onRestart }: Re
             </div>
           </div>
 
-          <div className={cn("px-4 py-2 rounded-full font-medium uppercase text-sm", qualityColors[qualityStatus])}>
+          <div className={cn("px-4 py-2 rounded-full font-medium uppercase text-sm", qualityFullColors[qualityStatus])}>
             {qualityLabels[qualityStatus]}
           </div>
         </div>
@@ -129,14 +114,14 @@ export function ResultsStep({ formData, result, onResultsViewed, onRestart }: Re
         <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Price Verdict</span>
-            <div className={cn("flex items-center gap-2 font-semibold text-lg", priceColors[price.priceStatus])}>
+            <div className={cn("flex items-center gap-2 font-semibold text-lg", priceTextColors[price.priceStatus])}>
               <PriceIcon className="w-5 h-5" />
               {priceLabels[price.priceStatus]}
             </div>
           </div>
 
           <div className="text-center py-2">
-            <span className={cn("text-2xl font-bold", priceColors[price.priceStatus])}>
+            <span className={cn("text-2xl font-bold", priceTextColors[price.priceStatus])}>
               {price.average !== null
                 ? `${Math.abs(price.deviation).toFixed(1)}% ${price.deviation <= 0 ? "below" : "above"} market`
                 : "No market data available"}

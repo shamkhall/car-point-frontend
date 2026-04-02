@@ -8,20 +8,7 @@ import { useAuth } from "@/components/auth-provider";
 import { getEvaluations, type EvaluationHistoryItem } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
-const qualityLabels: Record<number, string> = { 0: "Good", 1: "Poor", 2: "Excellent" };
-const qualityBadgeColors: Record<number, string> = {
-  0: "bg-warning/20 text-warning-foreground",
-  1: "bg-destructive/20 text-destructive",
-  2: "bg-success/20 text-success",
-};
-
-const priceLabels: Record<number, string> = { 0: "Fair Price", 1: "Great Deal", 2: "Overpriced" };
-const priceBadgeColors: Record<number, string> = {
-  0: "bg-muted text-muted-foreground",
-  1: "bg-success/20 text-success",
-  2: "bg-destructive/20 text-destructive",
-};
+import { qualityLabels, qualityBadgeColors, priceLabels, priceBadgeColors, scoreBreakdownConfig } from "@/lib/evaluation-labels";
 
 export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
@@ -57,17 +44,6 @@ export default function HistoryPage() {
       </div>
     );
   }
-
-  const breakdownLabels = [
-    { key: "mileageScore", label: "Mileage", max: 25 },
-    { key: "reliabilityScore", label: "Reliability", max: 20 },
-    { key: "ageScore", label: "Age", max: 15 },
-    { key: "conditionScore", label: "Condition", max: 15 },
-    { key: "depreciationScore", label: "Depreciation", max: 10 },
-    { key: "transmissionScore", label: "Transmission", max: 5 },
-    { key: "driveScore", label: "Drive", max: 5 },
-    { key: "engineScore", label: "Engine", max: 5 },
-  ] as const;
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-background">
@@ -136,7 +112,7 @@ export default function HistoryPage() {
                         </div>
                       )}
                       <div className="space-y-2">
-                        {breakdownLabels.map(({ key, label, max }) => (
+                        {scoreBreakdownConfig.map(({ key, label, max }) => (
                           <div key={key} className="space-y-1">
                             <div className="flex justify-between text-xs">
                               <span className="text-muted-foreground">{label}</span>
