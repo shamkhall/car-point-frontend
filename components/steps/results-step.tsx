@@ -127,13 +127,13 @@ export function ResultsStep({ formData, result, onResultsViewed, onRestart }: Re
 
           <div className="text-center py-2">
             <span className={cn("text-2xl font-bold", priceTextColors[price.priceStatus])}>
-              {price.average !== null
+              {price.average != null
                 ? `${Math.abs(price.deviation).toFixed(1)}% ${price.deviation <= 0 ? "below" : "above"} market`
                 : "No market data available"}
             </span>
           </div>
 
-          {price.average !== null && (
+          {price.average != null && (
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Your Price</span>

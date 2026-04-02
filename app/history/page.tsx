@@ -123,7 +123,7 @@ export default function HistoryPage() {
 
                   {isExpanded && (
                     <div className="px-4 pb-4 border-t border-border pt-4 space-y-3">
-                      {result.price.average !== null && (
+                      {result.price.average != null && (
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Market Average</span>
                           <span className="font-medium">{result.price.average.toLocaleString()} AZN ({result.price.deviation > 0 ? "+" : ""}{result.price.deviation.toFixed(1)}%)</span>
