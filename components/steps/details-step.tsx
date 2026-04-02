@@ -80,7 +80,7 @@ export function DetailsStep({
               <Label className="text-base font-medium">Color</Label>
               <Select
                 value={formData.color}
-                onValueChange={(color) => onUpdate({ color })}
+                onValueChange={(color) => onUpdate({ color: color as typeof formData.color })}
               >
                 <SelectTrigger className="h-14 text-base rounded-xl">
                   <SelectValue placeholder="Select color" />
@@ -117,7 +117,7 @@ export function DetailsStep({
                 <Label className="text-base font-medium">City</Label>
                 <Select
                   value={formData.city}
-                  onValueChange={(city) => onUpdate({ city })}
+                  onValueChange={(city) => onUpdate({ city: city as typeof formData.city })}
                 >
                   <SelectTrigger className="h-14 text-base rounded-xl">
                     <SelectValue placeholder="Select city" />

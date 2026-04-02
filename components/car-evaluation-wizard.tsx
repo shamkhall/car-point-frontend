@@ -125,6 +125,7 @@ export function CarEvaluationWizard() {
     setEvaluating(true);
     setEvaluationError(null);
 
+    const mileage = formData.isBrandNew ? 0 : formData.mileage!;
     const request: EvaluateRequest = {
       brand: formData.brand,
       model: formData.model,
@@ -132,15 +133,15 @@ export function CarEvaluationWizard() {
       bodyType: formData.bodyType,
       color: formData.color,
       engine: formData.engineType,
-      mileage: formData.isBrandNew ? 0 : formData.mileage,
+      mileage,
       transmission: formData.transmission,
       drive: formData.driveType,
       isNew: formData.isBrandNew,
-      numberOfSeats: formData.numberOfSeats,
+      numberOfSeats: formData.numberOfSeats!,
       condition: formData.condition,
       market: "turbo.az",
       city: formData.city,
-      price: formData.askingPrice,
+      price: formData.askingPrice!,
     };
 
     try {
