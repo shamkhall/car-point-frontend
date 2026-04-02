@@ -43,7 +43,12 @@ export function useAuth() {
 }
 
 async function handlePostSignIn() {
-  await createProfile();
+  try {
+    await createProfile();
+  } catch {
+    // Profile creation failed, but don't block sign-in
+    console.warn("Failed to create user profile");
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
