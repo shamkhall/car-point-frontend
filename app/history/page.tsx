@@ -18,6 +18,7 @@ export default function HistoryPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -28,14 +29,23 @@ export default function HistoryPage() {
   useEffect(() => {
     if (!user) return;
     setLoading(true);
+    setError(null);
     getEvaluations(page)
       .then((res) => {
         setEvaluations((prev) => (page === 1 ? res.data : [...prev, ...res.data]));
         setTotal(res.meta.total);
       })
-      .catch(() => {})
+      .catch(() => {
+        setError("Failed to load evaluations. Please try again.");
+      })
       .finally(() => setLoading(false));
   }, [user, page]);
+
+  const retry = () => {
+    setError(null);
+    setPage(1);
+    setEvaluations([]);
+  };
 
   if (authLoading || !user) {
     return (
@@ -64,6 +74,14 @@ export default function HistoryPage() {
         {loading && evaluations.length === 0 ? (
           <div className="flex justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : error && evaluations.length === 0 ? (
+          <div className="text-center py-16 text-muted-foreground">
+            <p className="text-lg mb-2">Something went wrong</p>
+            <p className="text-sm mb-4">{error}</p>
+            <Button variant="outline" onClick={retry} className="rounded-xl">
+              Try Again
+            </Button>
           </div>
         ) : evaluations.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
