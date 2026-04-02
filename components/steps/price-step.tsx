@@ -57,7 +57,8 @@ export function PriceStep({
                 type="number"
                 placeholder="Enter asking price"
                 value={formData.askingPrice ?? ""}
-                onChange={(e) => onUpdate({ askingPrice: e.target.value ? parseInt(e.target.value) : null })}
+                min={1}
+                onChange={(e) => onUpdate({ askingPrice: e.target.value ? Math.max(1, parseInt(e.target.value)) : null })}
                 className="h-16 text-xl font-semibold rounded-xl pr-20 pl-4"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">

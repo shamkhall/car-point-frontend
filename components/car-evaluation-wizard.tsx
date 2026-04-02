@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LandingStep } from "./steps/landing-step";
 import { BrandModelStep } from "./steps/brand-model-step";
@@ -14,6 +14,20 @@ import { AccountPrompt } from "./steps/account-prompt";
 import { evaluate, type EvaluationResult, type EvaluateRequest } from "@/lib/api";
 import { useAuth } from "./auth-provider";
 import type { Condition, EngineType, Transmission, DriveType, BodyType, Color, City } from "@/lib/car-data";
+
+const STEPS = {
+  LANDING: 0,
+  BRAND_MODEL: 1,
+  YEAR_MILEAGE: 2,
+  CONDITION_ENGINE: 3,
+  TRANSMISSION_DRIVE: 4,
+  DETAILS: 5,
+  PRICE: 6,
+  RESULTS: 7,
+} as const;
+
+const LAST_STEP = STEPS.RESULTS;
+const PROGRESS_STEPS = 7;
 
 export interface CarFormData {
   brand: string;
@@ -59,7 +73,7 @@ export function CarEvaluationWizard() {
   const [evaluating, setEvaluating] = useState(false);
   const [evaluationError, setEvaluationError] = useState<string | null>(null);
 
-  const totalSteps = 7;
+  const accountPromptTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateFormData = (updates: Partial<CarFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
@@ -67,7 +81,7 @@ export function CarEvaluationWizard() {
 
   const goToNext = () => {
     setDirection(1);
-    setCurrentStep((prev) => Math.min(prev + 1, 8));
+    setCurrentStep((prev) => Math.min(prev + 1, LAST_STEP));
   };
 
   const goToPrevious = () => {
@@ -78,6 +92,10 @@ export function CarEvaluationWizard() {
   };
 
   const restart = () => {
+    if (accountPromptTimerRef.current) {
+      clearTimeout(accountPromptTimerRef.current);
+      accountPromptTimerRef.current = null;
+    }
     setDirection(-1);
     setFormData(initialFormData);
     setEvaluationResult(null);
@@ -87,24 +105,42 @@ export function CarEvaluationWizard() {
   };
 
   const handleEvaluate = async () => {
+    if (
+      !formData.year ||
+      (!formData.isBrandNew && formData.mileage === null) ||
+      !formData.condition ||
+      !formData.engineType ||
+      !formData.transmission ||
+      !formData.driveType ||
+      !formData.bodyType ||
+      !formData.color ||
+      formData.numberOfSeats === null ||
+      !formData.city ||
+      formData.askingPrice === null
+    ) {
+      setEvaluationError("Please complete all fields before evaluating.");
+      return;
+    }
+
     setEvaluating(true);
     setEvaluationError(null);
 
+    const mileage = formData.isBrandNew ? 0 : formData.mileage!;
     const request: EvaluateRequest = {
       brand: formData.brand,
       model: formData.model,
-      year: formData.year!,
-      bodyType: formData.bodyType as string,
-      color: formData.color as string,
-      engine: formData.engineType as string,
-      mileage: formData.isBrandNew ? 0 : formData.mileage!,
-      transmission: formData.transmission as string,
-      drive: (formData.driveType as string).toUpperCase(),
+      year: formData.year,
+      bodyType: formData.bodyType,
+      color: formData.color,
+      engine: formData.engineType,
+      mileage,
+      transmission: formData.transmission,
+      drive: formData.driveType,
       isNew: formData.isBrandNew,
       numberOfSeats: formData.numberOfSeats!,
-      condition: formData.condition as string,
+      condition: formData.condition,
       market: "turbo.az",
-      city: formData.city as string,
+      city: formData.city,
       price: formData.askingPrice!,
     };
 
@@ -112,7 +148,7 @@ export function CarEvaluationWizard() {
       const result = await evaluate(request);
       setEvaluationResult(result);
       setDirection(1);
-      setCurrentStep(7);
+      setCurrentStep(STEPS.RESULTS);
     } catch {
       setEvaluationError("Unable to evaluate. Please try again.");
     } finally {
@@ -120,13 +156,13 @@ export function CarEvaluationWizard() {
     }
   };
 
-  const handleResultsViewed = () => {
+  const handleResultsViewed = useCallback(() => {
     if (!user) {
-      setTimeout(() => {
+      accountPromptTimerRef.current = setTimeout(() => {
         setShowAccountPrompt(true);
       }, 3000);
     }
-  };
+  }, [user]);
 
   const variants = {
     enter: (direction: number) => ({
@@ -145,77 +181,77 @@ export function CarEvaluationWizard() {
 
   const renderStep = () => {
     switch (currentStep) {
-      case 0:
+      case STEPS.LANDING:
         return <LandingStep onNext={goToNext} />;
-      case 1:
+      case STEPS.BRAND_MODEL:
         return (
           <BrandModelStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={1}
-            totalSteps={totalSteps}
+            currentStep={STEPS.BRAND_MODEL}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 2:
+      case STEPS.YEAR_MILEAGE:
         return (
           <YearMileageStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={2}
-            totalSteps={totalSteps}
+            currentStep={STEPS.YEAR_MILEAGE}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 3:
+      case STEPS.CONDITION_ENGINE:
         return (
           <ConditionEngineStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={3}
-            totalSteps={totalSteps}
+            currentStep={STEPS.CONDITION_ENGINE}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 4:
+      case STEPS.TRANSMISSION_DRIVE:
         return (
           <TransmissionDriveStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={4}
-            totalSteps={totalSteps}
+            currentStep={STEPS.TRANSMISSION_DRIVE}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 5:
+      case STEPS.DETAILS:
         return (
           <DetailsStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={goToNext}
             onBack={goToPrevious}
-            currentStep={5}
-            totalSteps={totalSteps}
+            currentStep={STEPS.DETAILS}
+            totalSteps={PROGRESS_STEPS}
           />
         );
-      case 6:
+      case STEPS.PRICE:
         return (
           <PriceStep
             formData={formData}
             onUpdate={updateFormData}
             onNext={handleEvaluate}
             onBack={goToPrevious}
-            currentStep={6}
-            totalSteps={totalSteps}
+            currentStep={STEPS.PRICE}
+            totalSteps={PROGRESS_STEPS}
             loading={evaluating}
             error={evaluationError}
           />
         );
-      case 7:
+      case STEPS.RESULTS:
         return evaluationResult ? (
           <ResultsStep
             formData={formData}
@@ -247,7 +283,7 @@ export function CarEvaluationWizard() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showAccountPrompt && currentStep === 7 && (
+        {showAccountPrompt && currentStep === STEPS.RESULTS && (
           <AccountPrompt onClose={() => setShowAccountPrompt(false)} />
         )}
       </AnimatePresence>

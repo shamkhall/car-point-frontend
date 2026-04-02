@@ -8,20 +8,7 @@ import { useAuth } from "@/components/auth-provider";
 import { getEvaluations, type EvaluationHistoryItem } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
-const qualityLabels: Record<number, string> = { 0: "Good", 1: "Poor", 2: "Excellent" };
-const qualityBadgeColors: Record<number, string> = {
-  0: "bg-warning/20 text-warning-foreground",
-  1: "bg-destructive/20 text-destructive",
-  2: "bg-success/20 text-success",
-};
-
-const priceLabels: Record<number, string> = { 0: "Fair Price", 1: "Great Deal", 2: "Overpriced" };
-const priceBadgeColors: Record<number, string> = {
-  0: "bg-muted text-muted-foreground",
-  1: "bg-success/20 text-success",
-  2: "bg-destructive/20 text-destructive",
-};
+import { qualityLabels, qualityBadgeColors, priceLabels, priceBadgeColors, scoreBreakdownConfig } from "@/lib/evaluation-labels";
 
 export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
@@ -31,6 +18,7 @@ export default function HistoryPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -41,14 +29,23 @@ export default function HistoryPage() {
   useEffect(() => {
     if (!user) return;
     setLoading(true);
+    setError(null);
     getEvaluations(page)
       .then((res) => {
         setEvaluations((prev) => (page === 1 ? res.data : [...prev, ...res.data]));
         setTotal(res.meta.total);
       })
-      .catch(() => {})
+      .catch(() => {
+        setError("Failed to load evaluations. Please try again.");
+      })
       .finally(() => setLoading(false));
   }, [user, page]);
+
+  const retry = () => {
+    setError(null);
+    setPage(1);
+    setEvaluations([]);
+  };
 
   if (authLoading || !user) {
     return (
@@ -57,17 +54,6 @@ export default function HistoryPage() {
       </div>
     );
   }
-
-  const breakdownLabels = [
-    { key: "mileageScore", label: "Mileage", max: 25 },
-    { key: "reliabilityScore", label: "Reliability", max: 20 },
-    { key: "ageScore", label: "Age", max: 15 },
-    { key: "conditionScore", label: "Condition", max: 15 },
-    { key: "depreciationScore", label: "Depreciation", max: 10 },
-    { key: "transmissionScore", label: "Transmission", max: 5 },
-    { key: "driveScore", label: "Drive", max: 5 },
-    { key: "engineScore", label: "Engine", max: 5 },
-  ] as const;
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-background">
@@ -88,6 +74,14 @@ export default function HistoryPage() {
         {loading && evaluations.length === 0 ? (
           <div className="flex justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : error && evaluations.length === 0 ? (
+          <div className="text-center py-16 text-muted-foreground">
+            <p className="text-lg mb-2">Something went wrong</p>
+            <p className="text-sm mb-4">{error}</p>
+            <Button variant="outline" onClick={retry} className="rounded-xl">
+              Try Again
+            </Button>
           </div>
         ) : evaluations.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
@@ -129,23 +123,23 @@ export default function HistoryPage() {
 
                   {isExpanded && (
                     <div className="px-4 pb-4 border-t border-border pt-4 space-y-3">
-                      {result.price.average !== null && (
+                      {result.price.average != null && (
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Market Average</span>
                           <span className="font-medium">{result.price.average.toLocaleString()} AZN ({result.price.deviation > 0 ? "+" : ""}{result.price.deviation.toFixed(1)}%)</span>
                         </div>
                       )}
                       <div className="space-y-2">
-                        {breakdownLabels.map(({ key, label, max }) => (
+                        {scoreBreakdownConfig.map(({ key, label, max }) => (
                           <div key={key} className="space-y-1">
                             <div className="flex justify-between text-xs">
                               <span className="text-muted-foreground">{label}</span>
-                              <span>{(result.scoreBreakdown as Record<string, number>)[key]}/{max}</span>
+                              <span>{result.scoreBreakdown[key]}/{max}</span>
                             </div>
                             <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-primary rounded-full"
-                                style={{ width: `${((result.scoreBreakdown as Record<string, number>)[key] / max) * 100}%` }}
+                                style={{ width: `${(result.scoreBreakdown[key] / max) * 100}%` }}
                               />
                             </div>
                           </div>

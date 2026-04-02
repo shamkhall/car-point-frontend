@@ -25,7 +25,9 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({ message: "Request failed" }));
-    throw new Error(error.message || `HTTP ${res.status}`);
+    const err = new Error(error.message || `HTTP ${res.status}`);
+    (err as Error & { status: number }).status = res.status;
+    throw err;
   }
 
   return res.json();
@@ -102,8 +104,11 @@ export async function evaluate(
 export async function createProfile(): Promise<void> {
   try {
     await apiFetch("/me", { method: "POST" });
-  } catch {
-    // 409 = profile already exists, ignore
+  } catch (e) {
+    if ((e as Error & { status?: number }).status === 409) {
+      return; // Profile already exists, ignore
+    }
+    throw e;
   }
 }
 
