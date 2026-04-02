@@ -104,7 +104,7 @@ export function DetailsStep({
                   value={formData.numberOfSeats ?? ""}
                   onChange={(e) =>
                     onUpdate({
-                      numberOfSeats: e.target.value ? parseInt(e.target.value) : null,
+                      numberOfSeats: e.target.value ? Math.min(50, Math.max(1, parseInt(e.target.value))) : null,
                     })
                   }
                   className="h-14 text-base rounded-xl"

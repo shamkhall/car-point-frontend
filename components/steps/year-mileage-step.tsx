@@ -33,7 +33,7 @@ export function YearMileageStep({
   totalSteps,
 }: YearMileageStepProps) {
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 30 }, (_, i) => currentYear - i);
+  const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
   
   const canContinue = formData.year && (formData.isBrandNew || formData.mileage !== null);
 
@@ -106,7 +106,8 @@ export function YearMileageStep({
                     type="number"
                     placeholder="Enter mileage"
                     value={formData.mileage ?? ""}
-                    onChange={(e) => onUpdate({ mileage: e.target.value ? parseInt(e.target.value) : null })}
+                    min={0}
+                    onChange={(e) => onUpdate({ mileage: e.target.value ? Math.max(0, parseInt(e.target.value)) : null })}
                     className="h-14 text-base rounded-xl pr-16"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
