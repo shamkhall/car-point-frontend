@@ -131,3 +131,99 @@ export async function getEvaluations(
     `/me/evaluations?page=${page}&limit=${limit}`
   );
 }
+
+// VIN History Reports
+export interface MileageRecord {
+  date: string;
+  mileage: number;
+  source: string;
+}
+
+export interface AccidentRecord {
+  date: string;
+  description: string;
+  severity: 'minor' | 'moderate' | 'severe';
+}
+
+export interface RiskFactors {
+  mileageFraud: boolean;
+  accidentDamage: boolean;
+  stolen: boolean;
+  importIssues: boolean;
+}
+
+export interface VINReport {
+  vin: string;
+  vehicleInfo: {
+    brand: string;
+    model: string;
+    year: number;
+    engineType: string;
+    transmission: string;
+  };
+  history: {
+    mileageRecords: MileageRecord[];
+    accidents: AccidentRecord[];
+  };
+  risks: RiskFactors;
+  score: number;
+}
+
+export interface VINCheckRequest {
+  vin: string;
+  brand?: string;
+  model?: string;
+}
+
+export interface VINCheckResponse {
+  available: boolean;
+  price: number;
+  report?: VINReport;
+  error?: string;
+}
+
+export async function checkVIN(data: VINCheckRequest): Promise<VINCheckResponse> {
+  // Mock implementation for frontend development
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        available: true,
+        price: 25,
+      });
+    }, 1000);
+  });
+}
+
+export async function purchaseVINReport(vin: string, paymentToken: string): Promise<VINReport> {
+  // Mock implementation
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        vin,
+        vehicleInfo: {
+          brand: "Toyota",
+          model: "Camry",
+          year: 2018,
+          engineType: "petrol",
+          transmission: "automatic"
+        },
+        history: {
+          mileageRecords: [
+            { date: "2020-05-12", mileage: 45000, source: "Service Center" },
+            { date: "2022-08-20", mileage: 82000, source: "Technical Inspection" }
+          ],
+          accidents: [
+            { date: "2021-03-15", description: "Rear bumper damage", severity: "minor" }
+          ]
+        },
+        risks: {
+          mileageFraud: false,
+          accidentDamage: true,
+          stolen: false,
+          importIssues: false
+        },
+        score: 85
+      });
+    }, 1500);
+  });
+}

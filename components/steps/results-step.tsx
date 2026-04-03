@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { RotateCcw, TrendingDown, TrendingUp, Minus, Shield } from "lucide-react";
+import { VINCheckModal } from "@/components/vin/vin-check-modal";
 import type { EvaluationResult } from "@/lib/api";
 import type { CarFormData } from "../car-evaluation-wizard";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,7 @@ export function ResultsStep({
   onRestart,
 }: ResultsStepProps) {
   const [showBreakdown, setShowBreakdown] = useState(false);
+  const [showVinModal, setShowVinModal] = useState(false);
 
   const hasNotified = useRef(false);
 
@@ -250,8 +252,19 @@ export function ResultsStep({
           </div>
         )}
 
+        {/* VIN Check Button */}
+        <div className="pt-2">
+          <Button
+            onClick={() => setShowVinModal(true)}
+            className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Shield className="w-4 h-4 mr-2" />
+            VIN Tarixçəsini Yoxla
+          </Button>
+        </div>
+
         {/* Restart Button */}
-        <div className="pt-4">
+        <div className="pt-2">
           <Button
             variant="outline"
             onClick={onRestart}
@@ -262,6 +275,16 @@ export function ResultsStep({
           </Button>
         </div>
       </div>
+
+      <VINCheckModal 
+        isOpen={showVinModal} 
+        onClose={() => setShowVinModal(false)}
+        carInfo={{
+          brand: formData.brand,
+          model: formData.model,
+          year: formData.year
+        }}
+      />
     </div>
   );
 }
