@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, TrendingDown, TrendingUp, Minus } from "lucide-react";
 import type { EvaluationResult } from "@/lib/api";
@@ -260,6 +261,11 @@ export function ResultsStep({
             <RotateCcw className="w-4 h-4 mr-2" />
             Başqa maşını qiymətləndir
           </Button>
+        </div>
+        <div className="pt-4">
+          <Link href="/list-for-sale">
+            <Button className="w-full h-12 rounded-xl">List this car for sale</Button>
+          </Link>
         </div>
       </div>
     </div>
